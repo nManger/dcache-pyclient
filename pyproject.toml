@@ -13,6 +13,9 @@ packages = [
 python = "^3.9"
 httpx = "^0.28.1"
 
+[tool.poetry.optional-dependencies]
+oidc-agent = [liboidcagent]
+
 [tool.poetry.group.test.dependencies]
 pytest = "^8.4.2"
 flake8 = "^7.3.0"

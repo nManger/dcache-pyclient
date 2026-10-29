@@ -168,6 +168,38 @@ class TokenFileAuth(TokenAuth):
 
         raise AdaAuthError(f"Could not read token from file: {path}")
 
+class TokenOidcAgentAuth(TokenAuth):
+    '''
+    Bearer token auth using the oidc-agent client library.
+    Requires oidc-agent to be installed, configured and running on the system.
+    '''
+
+    def __init__(self, client: str,**kwargs):
+        
+        try:
+            import liboidcagent as agent
+            self.agent = agent
+        except ImportError:
+            raise RuntimeError(
+                "This auth method requires 'liboidcagent'. "
+                "Install it using: pip install dcache-pyclient [oidc-agent]"
+            ) from None
+
+        self.client = client
+        self.token_options = kwargs
+
+        token = self._get_token()
+        
+        source = f"oidc-agent : {client}"
+        super().__init__(token, source)
+
+    def _get_token(self) -> str:
+        return self.agent.get_access_token(self.client, **self.token_options)
+
+    def headers(self) -> dict[str, str]:
+        self.token = self._get_token() 
+        return super().headers()
+
 
 def _parse_netrc(path: str, hostname: str) -> tuple[str, str]:
     """Parse a netrc file for the login/password of the given host.
