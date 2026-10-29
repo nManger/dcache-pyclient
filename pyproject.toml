@@ -14,7 +14,7 @@ python = "^3.9"
 httpx = "^0.28.1"
 
 [tool.poetry.optional-dependencies]
-oidc-agent = [liboidcagent]
+oidc-agent = ["liboidcagent"]
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.4.2"
